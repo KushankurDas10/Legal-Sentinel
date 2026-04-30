@@ -64,4 +64,4 @@ Legal Sentinel is designed with privacy in mind. Document text is processed temp
 
 ---
 
-Built for the **Advanced Agentic Coding Hackathon**. Protect your future, one document at a time.
+Built for the **Legal and Non Legal Minds**. Protect your future, one document at a time.
