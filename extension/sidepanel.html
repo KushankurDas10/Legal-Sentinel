@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Legal Sentinel</title>
+  <style>
+    :root {
+      --background: #0A0A0A;
+      --card: #141414;
+      --paper: #F5F5F7;
+      --alert: #FF3B30;
+      --safe: #34C759;
+      --caution: #FF9500;
+    }
+    body {
+      background-color: var(--background);
+      color: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      width: 28px;
+      height: 28px;
+      background: var(--alert);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      box-shadow: 0 0 15px rgba(255, 59, 48, 0.4);
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 24px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .btn {
+      background: var(--paper);
+      color: black;
+      border: none;
+      border-radius: 100px;
+      padding: 14px 24px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      letter-spacing: 0.02em;
+    }
+    .btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .status {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      margin-top: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+    }
+    .risk-score {
+      font-size: 64px;
+      font-weight: 700;
+      color: var(--paper);
+      margin: 8px 0;
+      letter-spacing: -0.04em;
+    }
+    .loader {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.05);
+      border-top-color: var(--alert);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      display: none;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div className="header">
+    <div className="logo"></div>
+    <h1>Legal Sentinel</h1>
+  </div>
+
+  <div className="card" id="main-card">
+    <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">
+      Navigate to a webpage containing a contract and click analyze.
+    </p>
+    <button id="analyze-btn" className="btn">Analyze This Page</button>
+    <div id="loader" className="loader"></div>
+    <p id="status" className="status">Ready to scan...</p>
+  </div>
+
+  <div id="results" className="card">
+    <p style="font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">Safety Score</p>
+    <div id="score" className="risk-score">--</div>
+    <p id="summary" style="font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.8); text-align: left; margin-bottom: 20px;"></p>
+    
+    <div id="power-balance" style="margin-bottom: 20px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; display: none;">
+      <p style="font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; text-align: left;">Power Equilibrium</p>
+      <div style="display: flex; justify-content: space-between; font-size: 11px;">
+        <span id="party-a">--</span>
+        <span id="party-b" style="color: var(--alert);">--</span>
+      </div>
+      <div style="height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin: 8px 0; position: relative;">
+        <div id="balance-bar" style="position: absolute; height: 100%; width: 50%; left: 25%; background: var(--alert); border-radius: 2px; transition: all 0.5s;"></div>
+      </div>
+    </div>
+
+    <div id="redline-summary" style="text-align: left; display: none;">
+      <p style="font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; font-weight: bold; margin-bottom: 10px;">Critical Redlines</p>
+      <div id="redline-list" style="font-size: 11px; line-height: 1.4; font-family: monospace;"></div>
+    </div>
+
+    <button id="reset-btn" className="btn" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.1); margin-top: 24px;">New Scan</button>
+  </div>
+
+  <script src="sidepanel.js"></script>
+</body>
+</html>
