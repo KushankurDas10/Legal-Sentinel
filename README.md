@@ -4,7 +4,7 @@
 
 Legal Sentinel is a document-agnostic legal analysis engine designed to protect freelancers, small businesses, and individuals from hidden risks in legal instruments. From NDAs and Wills to complex Service Agreements, Legal Sentinel provides high-precision audits, structural risk heatmaps, and proactive "Sentry Peek" browser integration.
 
-![Legal Sentinel Hero](public/hero-screenshot.png) *(Placeholder: Replace with your actual screenshot)*
+![Legal Sentinel Hero](public/hero-screenshot.png)
 
 ## 🚀 Key Features
 
