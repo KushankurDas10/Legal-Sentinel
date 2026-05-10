@@ -23,6 +23,10 @@ import { RiskHeatmap } from "./RiskHeatmap";
 import { PowerBalance } from "./PowerBalance";
 import { useMotionValue, useTransform, useSpring } from "framer-motion";
 
+interface AnalysisPanelProps {
+  data: AnalysisResponse;
+}
+
 // Quantum Card for Layered 3D Depth
 const QuantumCard = ({ children, className, depth = 30 }: { children: React.ReactNode, className?: string, depth?: number }) => {
   const x = useMotionValue(0);

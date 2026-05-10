@@ -15,10 +15,6 @@ export function InteractiveBackground() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const points: Point[] = [];
-    const numPoints = 100;
-    const maxDist = 300;
-    const mouse = { x: width / 2, y: height / 2, active: false };
     const legalTerms = ["LIABILITY", "BREACH", "IP", "CLAUSE", "RISK", "SAFE", "SENTINEL", "CONTRACT"];
 
     class Point {
@@ -61,6 +57,11 @@ export function InteractiveBackground() {
         return { px, py, scale };
       }
     }
+
+    const points: Point[] = [];
+    const numPoints = 100;
+    const maxDist = 300;
+    const mouse = { x: width / 2, y: height / 2, active: false };
 
     for (let i = 0; i < numPoints; i++) {
       points.push(new Point());
