@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Scale, User, Building2, Gavel } from "lucide-react";
+import { User, Building2, Gavel, Zap } from "lucide-react";
 
 interface PowerBalanceProps {
   partyA: string;
@@ -23,95 +23,111 @@ export function PowerBalance({
   obligationsB,
   balanceScore 
 }: PowerBalanceProps) {
-  // Calculate rotation based on balanceScore
-  // 0 is balanced, negative is Party A favored, positive is Party B favored
-  const rotation = (balanceScore / 100) * 15;
+  // Calculate physics-based visualization values
+  const tilt = (balanceScore / 100) * 20;
+  const sizeA = 40 + (rightsA / (rightsA + rightsB || 1)) * 40;
+  const sizeB = 40 + (rightsB / (rightsA + rightsB || 1)) * 40;
 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-8">
         <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 flex items-center gap-2">
-          <Gavel className="w-3.5 h-3.5 text-alert" /> Equilibrium Analysis
+          <Gavel className="w-3.5 h-3.5 text-alert" /> Power Equilibrium
         </h3>
-        <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white/50 uppercase tracking-wider">
-          {Math.abs(balanceScore) < 10 ? "Balanced" : balanceScore < 0 ? `${partyA} Favored` : `${partyB} Favored`}
+        <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white/50 uppercase tracking-wider backdrop-blur-sm">
+          {Math.abs(balanceScore) < 10 ? "Optimal Balance" : balanceScore < 0 ? `${partyA} Dominant` : `${partyB} Dominant`}
         </div>
       </div>
 
-      <div className="relative h-64 flex flex-col items-center justify-center overflow-hidden">
-        {/* The Scale Base */}
-        <div className="absolute bottom-4 w-32 h-2 bg-white/5 rounded-full" />
-        <div className="absolute bottom-4 w-1 h-32 bg-gradient-to-t from-white/10 to-transparent" />
-
-        {/* The Scale Beam */}
-        <motion.div 
-          animate={{ rotate: rotation }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
-          className="relative w-full max-w-md flex items-center justify-between px-12 z-10"
-        >
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[2px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="relative h-80 flex items-center justify-center perspective-container overflow-visible">
+        {/* Central Hub */}
+        <div className="absolute z-20 w-12 h-12 rounded-full bg-charcoal border border-white/20 flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+          <Zap className="w-5 h-5 text-alert animate-pulse" />
           
-          {/* Party A Side */}
-          <div className="relative flex flex-col items-center">
-            <motion.div 
-              animate={{ y: rotation * 2 }}
-              className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-1 backdrop-blur-md shadow-2xl"
+          {/* Orbital Data Rings */}
+          <motion.div 
+            animate={{ rotate: 360, rotateX: 70 }}
+            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            className="absolute w-48 h-48 border border-alert/20 rounded-full"
+          />
+          <motion.div 
+            animate={{ rotate: -360, rotateX: 60 }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="absolute w-64 h-64 border border-white/5 rounded-full"
+          />
+        </div>
+
+        {/* The 3D Bar-Bell Assembly */}
+        <motion.div
+          animate={{ rotateZ: tilt, rotateY: [0, 5, 0] }}
+          transition={{ 
+            rotateZ: { type: "spring", stiffness: 40, damping: 15 },
+            rotateY: { duration: 5, repeat: Infinity, ease: "easeInOut" }
+          }}
+          style={{ transformStyle: "preserve-3d" }}
+          className="relative w-full max-w-sm h-1 flex items-center justify-center"
+        >
+          {/* Connecting Energy Beam */}
+          <div className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          <div className="absolute w-full h-[8px] bg-alert/5 blur-md" />
+
+          {/* Side A: Sphere & Label */}
+          <div className="absolute left-0 -translate-x-1/2 flex flex-col items-center" style={{ transformStyle: "preserve-3d" }}>
+            <motion.div
+              style={{ width: sizeA, height: sizeA }}
+              className="rounded-full bg-white/5 border border-white/20 relative flex items-center justify-center shadow-[0_0_40px_rgba(255,255,255,0.05)]"
             >
-              <User className="w-6 h-6 text-paper" />
-              <div className="text-[8px] font-bold uppercase text-white/40">{partyA.substring(0, 8)}...</div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent rounded-full" />
+              <User className="w-1/2 h-1/2 text-white/40" />
+              
+              {/* Floating Stat Card */}
+              <div 
+                className="absolute -top-12 bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg px-2 py-1 whitespace-nowrap"
+                style={{ transform: "translateZ(30px)" }}
+              >
+                <span className="text-xs font-bold text-white">{rightsA}</span>
+                <span className="text-[8px] text-white/30 uppercase ml-1">Rights</span>
+              </div>
             </motion.div>
-            <div className="mt-4 text-center">
-              <div className="text-xl font-bold text-paper">{rightsA} <span className="text-[10px] text-white/30">Rights</span></div>
-              <div className="text-sm text-white/40">{obligationsA} <span className="text-[10px] text-white/20">Obligations</span></div>
-            </div>
           </div>
 
-          <div className="text-white/10">
-            <Scale className="w-12 h-12" />
-          </div>
-
-          {/* Party B Side */}
-          <div className="relative flex flex-col items-center">
-            <motion.div 
-              animate={{ y: -rotation * 2 }}
-              className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center gap-1 backdrop-blur-md shadow-2xl"
+          {/* Side B: Sphere & Label */}
+          <div className="absolute right-0 translate-x-1/2 flex flex-col items-center" style={{ transformStyle: "preserve-3d" }}>
+            <motion.div
+              style={{ width: sizeB, height: sizeB }}
+              className="rounded-full bg-alert/5 border border-alert/20 relative flex items-center justify-center shadow-[0_0_40px_rgba(255,76,76,0.1)]"
             >
-              <Building2 className="w-6 h-6 text-alert" />
-              <div className="text-[8px] font-bold uppercase text-white/40">{partyB.substring(0, 8)}...</div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-alert/20 to-transparent rounded-full" />
+              <Building2 className="w-1/2 h-1/2 text-alert/60" />
+
+              {/* Floating Stat Card */}
+              <div 
+                className="absolute -top-12 bg-black/40 backdrop-blur-xl border border-white/10 rounded-lg px-2 py-1 whitespace-nowrap"
+                style={{ transform: "translateZ(30px)" }}
+              >
+                <span className="text-xs font-bold text-alert">{rightsB}</span>
+                <span className="text-[8px] text-white/30 uppercase ml-1">Rights</span>
+              </div>
             </motion.div>
-            <div className="mt-4 text-center">
-              <div className="text-xl font-bold text-paper">{rightsB} <span className="text-[10px] text-white/30">Rights</span></div>
-              <div className="text-sm text-white/40">{obligationsB} <span className="text-[10px] text-white/20">Obligations</span></div>
-            </div>
           </div>
         </motion.div>
 
-        {/* Decorative Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ 
-                opacity: [0, 0.5, 0], 
-                scale: [0, 1, 0],
-                x: Math.random() * 400 - 200,
-                y: Math.random() * 200 - 100 
-              }}
-              transition={{ 
-                duration: 2 + Math.random() * 2, 
-                repeat: Infinity, 
-                delay: Math.random() * 2 
-              }}
-              className="absolute left-1/2 top-1/2 w-1 h-1 bg-white/20 rounded-full"
-            />
-          ))}
+        {/* Party Names (Fixed Position) */}
+        <div className="absolute bottom-0 w-full flex justify-between px-4">
+          <div className="text-center">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">{partyA}</div>
+            <div className="text-[8px] text-white/30">{obligationsA} Obligations</div>
+          </div>
+          <div className="text-center">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-white/40">{partyB}</div>
+            <div className="text-[8px] text-white/30">{obligationsB} Obligations</div>
+          </div>
         </div>
       </div>
 
-      <div className="mt-6 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-        <p className="text-[11px] text-white/50 leading-relaxed text-center italic">
-          The power balance is calculated by analyzing enforceable rights versus mandatory obligations assigned to each entity within the contractual framework.
+      <div className="mt-8 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+        <p className="text-[10px] text-white/30 leading-relaxed text-center italic uppercase tracking-tighter">
+          Analysis shows a {Math.abs(balanceScore)}% deviation from neutral equilibrium favoring {balanceScore < 0 ? partyA : partyB}.
         </p>
       </div>
     </div>

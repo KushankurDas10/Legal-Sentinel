@@ -70,16 +70,28 @@ export function InteractiveBackground() {
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
-      // Draw 3D Grid Floor
+      // Draw 3D Grid Floor (Refined)
       const gridZ = 500;
       const gridScale = 500 / (500 + gridZ);
-      ctx.strokeStyle = "rgba(255, 76, 76, 0.05)";
+      ctx.strokeStyle = "rgba(255, 76, 76, 0.08)";
       ctx.lineWidth = 1;
-      for (let i = -5; i <= 5; i++) {
-        const x = width / 2 + i * 200 * gridScale;
+      
+      const horizontalLines = 15;
+      for (let i = 0; i < horizontalLines; i++) {
+        const lineZ = (i / horizontalLines) * 1000;
+        const lineScale = 500 / (500 + lineZ);
+        const y = height * 0.6 + (height * 0.4) * (1 - lineScale);
         ctx.beginPath();
-        ctx.moveTo(x, height);
-        ctx.lineTo(width / 2 + i * 800, height * 0.6);
+        ctx.moveTo(width / 2 - 1000 * lineScale, y);
+        ctx.lineTo(width / 2 + 1000 * lineScale, y);
+        ctx.stroke();
+      }
+
+      for (let i = -10; i <= 10; i++) {
+        const xStart = width / 2 + i * 100;
+        ctx.beginPath();
+        ctx.moveTo(xStart, height);
+        ctx.lineTo(width / 2 + i * 20, height * 0.6);
         ctx.stroke();
       }
 
@@ -90,20 +102,20 @@ export function InteractiveBackground() {
         const { px: x1, py: y1, scale: s1 } = p1.update();
 
         // Draw Glow
-        const gradient = ctx.createRadialGradient(x1, y1, 0, x1, y1, 10 * s1);
-        gradient.addColorStop(0, `rgba(255, 76, 76, ${0.8 * s1})`);
+        const gradient = ctx.createRadialGradient(x1, y1, 0, x1, y1, 12 * s1);
+        gradient.addColorStop(0, `rgba(255, 76, 76, ${0.9 * s1})`);
         gradient.addColorStop(1, "rgba(255, 76, 76, 0)");
         
         ctx.beginPath();
-        ctx.arc(x1, y1, 10 * s1, 0, Math.PI * 2);
+        ctx.arc(x1, y1, 12 * s1, 0, Math.PI * 2);
         ctx.fillStyle = gradient;
         ctx.fill();
 
         // Draw Legal Terms
         if (p1.term) {
-          ctx.font = `${Math.floor(12 * s1)}px Outfit`;
-          ctx.fillStyle = `rgba(255, 255, 255, ${0.3 * s1})`;
-          ctx.fillText(p1.term, x1 + 10 * s1, y1);
+          ctx.font = `600 ${Math.floor(14 * s1)}px Outfit`;
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.4 * s1})`;
+          ctx.fillText(p1.term, x1 + 12 * s1, y1);
         }
 
         for (let j = i + 1; j < points.length; j++) {
@@ -118,8 +130,9 @@ export function InteractiveBackground() {
 
           if (dist < maxDist * s1) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 76, 76, ${0.4 * (1 - dist / (maxDist * s1)) * s1})`;
-            ctx.lineWidth = 1.5 * s1;
+            const pulse = Math.sin(Date.now() * 0.005 + i) * 0.2 + 0.5;
+            ctx.strokeStyle = `rgba(255, 76, 76, ${pulse * (1 - dist / (maxDist * s1)) * s1})`;
+            ctx.lineWidth = 1 * s1;
             ctx.moveTo(x1, y1);
             ctx.lineTo(x2, y2);
             ctx.stroke();

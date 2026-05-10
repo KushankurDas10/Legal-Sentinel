@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { AnalysisResponse } from "@/lib/schema";
 import { DocumentViewer } from "@/components/DocumentViewer";
-import { AnalysisPanel } from "@/components/AnalysisPanel";
+import { AnalysisOverview, AnalysisDetails, useAnalysisState } from "@/components/AnalysisPanel";
 import { HistoryDashboard } from "@/components/HistoryDashboard";
 import { ChatInterface } from "@/components/ChatInterface";
 import { InteractiveBackground } from "@/components/InteractiveBackground";
@@ -25,6 +25,7 @@ export default function LegalSentinelDashboard() {
   const [analysisData, setAnalysisData] = useState<AnalysisResponse | null>(null);
   const [extractedText, setExtractedText] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const analysisState = useAnalysisState();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -102,11 +103,16 @@ export default function LegalSentinelDashboard() {
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] text-paper selection:bg-alert/30 selection:text-paper font-outfit overflow-x-hidden relative">
+      {/* Cinematic Overlays */}
+      <div className="cyber-noise" />
+      <div className="scanlines" />
+      
       {/* Perspective Grid Background */}
       <InteractiveBackground />
       
       {/* Visual Overlays */}
       <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-vignette opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0A0A0A] via-transparent to-[#0A0A0A] opacity-40" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0A] via-transparent to-[#0A0A0A] opacity-40" />
       </div>
@@ -321,24 +327,37 @@ export default function LegalSentinelDashboard() {
             </motion.div>
           )}
 
-          {/* ANALYSIS STATE (SIDE-BY-SIDE) */}
+          {/* ANALYSIS STATE (SIDE-BY-SIDE TRANSITIONING TO FULL-WIDTH) */}
           {viewState === "analysis" && analysisData && (
             <motion.div 
               key="analysis"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="grid grid-cols-1 xl:grid-cols-2 gap-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="space-y-32"
             >
-              {/* Left Pane: Document Viewer */}
-              <div className="hidden xl:block h-[calc(100vh-140px)] sticky top-24">
-                <DocumentViewer file={file} />
+              {/* Overview Section: Side-by-Side */}
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                {/* Left Pane: Document Viewer */}
+                <div className="hidden xl:block h-[calc(100vh-140px)] sticky top-24">
+                  <DocumentViewer file={file} />
+                </div>
+
+                {/* Right Pane: Top-level Analysis (Heatmap, Power Balance) */}
+                <div className="w-full">
+                  <AnalysisOverview data={analysisData} state={analysisState} />
+                </div>
               </div>
 
-              {/* Right Pane: Analysis Panel */}
-              <div className="w-full">
-                <AnalysisPanel data={analysisData} />
-              </div>
+              {/* Detailed Section: Full-Width Centered */}
+              <motion.div 
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="w-full border-t border-white/5 pt-32"
+              >
+                <AnalysisDetails data={analysisData} state={analysisState} />
+              </motion.div>
             </motion.div>
           )}
 
