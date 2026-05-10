@@ -18,12 +18,12 @@ export function InteractiveBackground() {
     const legalTerms = ["LIABILITY", "BREACH", "IP", "CLAUSE", "RISK", "SAFE", "SENTINEL", "CONTRACT"];
 
     class Point {
-      x: number;
-      y: number;
-      z: number;
-      vx: number;
-      vy: number;
-      vz: number;
+      x!: number;
+      y!: number;
+      z!: number;
+      vx!: number;
+      vy!: number;
+      vz!: number;
       term: string | null;
 
       constructor() {
