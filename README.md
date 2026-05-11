@@ -25,7 +25,7 @@ AI-driven suggestions for professional-grade redlines, allowing users to see exa
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: Next.js 14, Tailwind CSS, Framer Motion
+- **Frontend**: Next.js 16.2.6, Tailwind CSS, Framer Motion
 - **Intelligence**: OpenRouter AI (LLM Agnostic), Vercel AI SDK
 - **Parsing**: `unpdf` (Optimized serverless PDF extraction)
 - **Extension**: Chrome Manifest V3, Content Script Injection, Background Service Workers
